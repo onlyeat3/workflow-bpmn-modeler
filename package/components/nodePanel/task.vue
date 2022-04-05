@@ -3,17 +3,25 @@
     <x-form ref="xForm" v-model="formData" :config="formConfig">
       <template #executionListener>
         <el-badge :value="executionListenerLength">
-          <el-button size="small" @click="dialogName = 'executionListenerDialog'">编辑</el-button>
+          <el-button
+            size="small"
+            @click="dialogName = 'executionListenerDialog'"
+            >编辑</el-button
+          >
         </el-badge>
       </template>
       <template #taskListener>
         <el-badge :value="taskListenerLength">
-          <el-button size="small" @click="dialogName = 'taskListenerDialog'">编辑</el-button>
+          <el-button size="small" @click="dialogName = 'taskListenerDialog'"
+            >编辑</el-button
+          >
         </el-badge>
       </template>
       <template #multiInstance>
         <el-badge :is-dot="hasMultiInstance">
-          <el-button size="small" @click="dialogName = 'multiInstanceDialog'">编辑</el-button>
+          <el-button size="small" @click="dialogName = 'multiInstanceDialog'"
+            >编辑</el-button
+          >
         </el-badge>
       </template>
     </x-form>
@@ -59,9 +67,13 @@ export default {
     groups: {
       type: Array,
       required: true
+    },
+    forms: {
+      type: Array,
+      required: true
     }
   },
-  data() {
+  data () {
     return {
       userTypeOption: [
         { label: '指定人员', value: 'assignee' },
@@ -76,7 +88,7 @@ export default {
     }
   },
   computed: {
-    formConfig() {
+    formConfig () {
       const _this = this
       return {
         inline: false,
@@ -164,9 +176,10 @@ export default {
             show: !!_this.showConfig.priority
           },
           {
-            xType: 'input',
+            xType: 'select',
             name: 'formKey',
-            label: '表单标识key',
+            label: '表单',
+            dic: { data: _this.forms, label: 'formName', value: 'formId' },
             show: !!_this.showConfig.formKey
           },
           {
@@ -243,7 +256,7 @@ export default {
     }
   },
   watch: {
-    'formData.userType': function(val, oldVal) {
+    'formData.userType': function (val, oldVal) {
       if (oldVal) {
         const types = ['assignee', 'candidateUsers', 'candidateGroups']
         types.forEach(type => {
@@ -252,81 +265,81 @@ export default {
         })
       }
     },
-    'formData.assignee': function(val) {
+    'formData.assignee': function (val) {
       if (this.formData.userType !== 'assignee') {
         delete this.element.businessObject.$attrs[`flowable:assignee`]
         return
       }
       this.updateProperties({ 'flowable:assignee': val })
     },
-    'formData.candidateUsers': function(val) {
+    'formData.candidateUsers': function (val) {
       if (this.formData.userType !== 'candidateUsers') {
         delete this.element.businessObject.$attrs[`flowable:candidateUsers`]
         return
       }
       this.updateProperties({ 'flowable:candidateUsers': val?.join(',') })
     },
-    'formData.candidateGroups': function(val) {
+    'formData.candidateGroups': function (val) {
       if (this.formData.userType !== 'candidateGroups') {
         delete this.element.businessObject.$attrs[`flowable:candidateGroups`]
         return
       }
       this.updateProperties({ 'flowable:candidateGroups': val?.join(',') })
     },
-    'formData.async': function(val) {
+    'formData.async': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:async': true })
     },
-    'formData.dueDate': function(val) {
+    'formData.dueDate': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:dueDate': val })
     },
-    'formData.formKey': function(val) {
+    'formData.formKey': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:formKey': val })
     },
-    'formData.priority': function(val) {
+    'formData.priority': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:priority': val })
     },
-    'formData.skipExpression': function(val) {
+    'formData.skipExpression': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:skipExpression': val })
     },
-    'formData.isForCompensation': function(val) {
+    'formData.isForCompensation': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'isForCompensation': val })
     },
-    'formData.triggerable': function(val) {
+    'formData.triggerable': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:triggerable': val })
     },
-    'formData.class': function(val) {
+    'formData.class': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:class': val })
     },
-    'formData.autoStoreVariables': function(val) {
+    'formData.autoStoreVariables': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:autoStoreVariables': val })
     },
-    'formData.exclude': function(val) {
+    'formData.exclude': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:exclude': val })
     },
-    'formData.ruleVariablesInput': function(val) {
+    'formData.ruleVariablesInput': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:ruleVariablesInput': val })
     },
-    'formData.rules': function(val) {
+    'formData.rules': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:rules': val })
     },
-    'formData.resultVariable': function(val) {
+    'formData.resultVariable': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:resultVariable': val })
     }
   },
-  created() {
+  created () {
     let cache = commonParse(this.element)
     cache = userTaskParse(cache)
     this.formData = cache
@@ -335,34 +348,34 @@ export default {
     this.computedHasMultiInstance()
   },
   methods: {
-    computedExecutionListenerLength() {
+    computedExecutionListenerLength () {
       this.executionListenerLength = this.element.businessObject.extensionElements?.values
         ?.filter(item => item.$type === 'flowable:ExecutionListener').length ?? 0
     },
-    computedTaskListenerLength() {
+    computedTaskListenerLength () {
       this.taskListenerLength = this.element.businessObject.extensionElements?.values
         ?.filter(item => item.$type === 'flowable:TaskListener').length ?? 0
     },
-    computedHasMultiInstance() {
+    computedHasMultiInstance () {
       if (this.element.businessObject.loopCharacteristics) {
         this.hasMultiInstance = true
       } else {
         this.hasMultiInstance = false
       }
     },
-    finishExecutionListener() {
+    finishExecutionListener () {
       if (this.dialogName === 'executionListenerDialog') {
         this.computedExecutionListenerLength()
       }
       this.dialogName = ''
     },
-    finishTaskListener() {
+    finishTaskListener () {
       if (this.dialogName === 'taskListenerDialog') {
         this.computedTaskListenerLength()
       }
       this.dialogName = ''
     },
-    finishMultiInstance() {
+    finishMultiInstance () {
       if (this.dialogName === 'multiInstanceDialog') {
         this.computedHasMultiInstance()
       }

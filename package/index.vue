@@ -1,50 +1,106 @@
 <template>
-  <div v-loading="isView" class="flow-containers" :class="{ 'view-mode': isView }">
+  <div
+    v-loading="isView"
+    class="flow-containers"
+    :class="{ 'view-mode': isView }"
+  >
     <el-container style="height: 100%">
-      <el-header style="border-bottom: 1px solid rgb(218 218 218);height: auto;">
-        <div style="display: flex; padding: 10px 0px; justify-content: space-between;">
+      <el-header
+        style="border-bottom: 1px solid rgb(218 218 218); height: auto"
+      >
+        <div
+          style="
+            display: flex;
+            padding: 10px 0px;
+            justify-content: space-between;
+          "
+        >
           <div>
-            <el-upload action="" :before-upload="openBpmn" style="margin-right: 10px; display:inline-block;">
+            <el-upload
+              action=""
+              :before-upload="openBpmn"
+              style="margin-right: 10px; display: inline-block"
+            >
               <el-tooltip effect="dark" content="加载xml" placement="bottom">
                 <el-button size="mini" icon="el-icon-folder-opened" />
               </el-tooltip>
             </el-upload>
             <el-tooltip effect="dark" content="新建" placement="bottom">
-              <el-button size="mini" icon="el-icon-circle-plus" @click="newDiagram" />
+              <el-button
+                size="mini"
+                icon="el-icon-circle-plus"
+                @click="newDiagram"
+              />
             </el-tooltip>
             <el-tooltip effect="dark" content="自适应屏幕" placement="bottom">
               <el-button size="mini" icon="el-icon-rank" @click="fitViewport" />
             </el-tooltip>
             <el-tooltip effect="dark" content="放大" placement="bottom">
-              <el-button size="mini" icon="el-icon-zoom-in" @click="zoomViewport(true)" />
+              <el-button
+                size="mini"
+                icon="el-icon-zoom-in"
+                @click="zoomViewport(true)"
+              />
             </el-tooltip>
             <el-tooltip effect="dark" content="缩小" placement="bottom">
-              <el-button size="mini" icon="el-icon-zoom-out" @click="zoomViewport(false)" />
+              <el-button
+                size="mini"
+                icon="el-icon-zoom-out"
+                @click="zoomViewport(false)"
+              />
             </el-tooltip>
             <el-tooltip effect="dark" content="后退" placement="bottom">
-              <el-button size="mini" icon="el-icon-back" @click="modeler.get('commandStack').undo()" />
+              <el-button
+                size="mini"
+                icon="el-icon-back"
+                @click="modeler.get('commandStack').undo()"
+              />
             </el-tooltip>
             <el-tooltip effect="dark" content="前进" placement="bottom">
-              <el-button size="mini" icon="el-icon-right" @click="modeler.get('commandStack').redo()" />
+              <el-button
+                size="mini"
+                icon="el-icon-right"
+                @click="modeler.get('commandStack').redo()"
+              />
             </el-tooltip>
           </div>
           <div>
-            <el-button size="mini" icon="el-icon-download" @click="saveXML(true)">下载xml</el-button>
-            <el-button size="mini" icon="el-icon-picture" @click="saveImg('svg', true)">下载svg</el-button>
-            <el-button size="mini" type="primary" @click="save">保存模型</el-button>
+            <el-button
+              size="mini"
+              icon="el-icon-download"
+              @click="saveXML(true)"
+              >下载xml</el-button
+            >
+            <el-button
+              size="mini"
+              icon="el-icon-picture"
+              @click="saveImg('svg', true)"
+              >下载svg</el-button
+            >
+            <el-button size="mini" type="primary" @click="save"
+              >保存模型</el-button
+            >
           </div>
         </div>
       </el-header>
       <el-container style="align-items: stretch">
-        <el-main style="padding: 0;">
+        <el-main style="padding: 0">
           <div ref="canvas" class="canvas" />
         </el-main>
-        <el-aside style="width: 400px; min-height: 650px; background-color: #f0f2f5">
-          <panel v-if="modeler" :modeler="modeler" :users="users" :groups="groups" :categorys="categorys" />
+        <el-aside
+          style="width: 400px; min-height: 650px; background-color: #f0f2f5"
+        >
+          <panel
+            v-if="modeler"
+            :modeler="modeler"
+            :users="users"
+            :groups="groups"
+            :forms="forms"
+            :categorys="categorys"
+          />
         </el-aside>
       </el-container>
     </el-container>
-
   </div>
 </template>
 
@@ -75,6 +131,10 @@ export default {
       type: Array,
       default: () => []
     },
+    forms: {
+      type: Array,
+      default: () => []
+    },
     categorys: {
       type: Array,
       default: () => []
@@ -84,7 +144,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       modeler: null,
       taskList: [],
@@ -92,13 +152,13 @@ export default {
     }
   },
   watch: {
-    xml: function(val) {
+    xml: function (val) {
       if (val) {
         this.createNewDiagram(val)
       }
     }
   },
-  mounted() {
+  mounted () {
     // 生成实例
     this.modeler = new Modeler({
       container: this.$refs.canvas,
@@ -119,11 +179,11 @@ export default {
     }
   },
   methods: {
-    newDiagram() {
+    newDiagram () {
       this.createNewDiagram(getInitStr())
     },
     // 让图能自适应屏幕
-    fitViewport() {
+    fitViewport () {
       this.zoom = this.modeler.get('canvas').zoom('fit-viewport')
       const bbox = document.querySelector('.flow-containers .viewport').getBBox()
       const currentViewbox = this.modeler.get('canvas').viewbox()
@@ -140,15 +200,15 @@ export default {
       this.zoom = bbox.width / currentViewbox.width * 1.8
     },
     // 放大缩小
-    zoomViewport(zoomIn = true) {
+    zoomViewport (zoomIn = true) {
       this.zoom = this.modeler.get('canvas').zoom()
       this.zoom += (zoomIn ? 0.1 : -0.1)
       this.modeler.get('canvas').zoom(this.zoom)
     },
-    async createNewDiagram(data) {
+    async createNewDiagram (data) {
       // 将字符串转换成图显示出来
       // data = data.replace(/<!\[CDATA\[(.+?)]]>/g, '&lt;![CDATA[$1]]&gt;')
-      data = data.replace(/<!\[CDATA\[(.+?)]]>/g, function(match, str) {
+      data = data.replace(/<!\[CDATA\[(.+?)]]>/g, function (match, str) {
         return str.replace(/</g, '&lt;')
       })
       try {
@@ -161,7 +221,7 @@ export default {
       }
     },
     // 调整左侧工具栏排版
-    adjustPalette() {
+    adjustPalette () {
       try {
         // 获取 bpmn 设计器实例
         const canvas = this.$refs.canvas
@@ -199,9 +259,8 @@ export default {
               const controlProps = new BpmData().getControl(
                 control.dataset.action
               )
-              control.innerHTML = `<div style='font-size: 14px;font-weight:500;margin-left:15px;'>${
-                controlProps['title']
-              }</div>`
+              control.innerHTML = `<div style='font-size: 14px;font-weight:500;margin-left:15px;'>${controlProps['title']
+                }</div>`
               for (var csKey in controlStyle) {
                 control.style[csKey] = controlStyle[csKey]
               }
@@ -212,7 +271,7 @@ export default {
         console.log(e)
       }
     },
-    fillColor() {
+    fillColor () {
       const canvas = this.modeler.get('canvas')
       this.modeler._definitions.rootElements[0].flowElements.forEach(n => {
         if (n.$type === 'bpmn:UserTask') {
@@ -262,7 +321,7 @@ export default {
       })
     },
     // 对外 api
-    getProcess() {
+    getProcess () {
       const element = this.getProcessElement()
       return {
         id: element.id,
@@ -270,13 +329,13 @@ export default {
         category: element.$attrs['flowable:processCategory']
       }
     },
-    getProcessElement() {
+    getProcessElement () {
       const rootElements = this.modeler.getDefinitions().rootElements
       for (let i = 0; i < rootElements.length; i++) {
         if (rootElements[i].$type === 'bpmn:Process') return rootElements[i]
       }
     },
-    async saveXML(download = false) {
+    async saveXML (download = false) {
       try {
         const { xml } = await this.modeler.saveXML({ format: true })
         if (download) {
@@ -287,7 +346,7 @@ export default {
         console.log(err)
       }
     },
-    async saveImg(type = 'svg', download = false) {
+    async saveImg (type = 'svg', download = false) {
       try {
         const { svg } = await this.modeler.saveSVG({ format: true })
         if (download) {
@@ -298,7 +357,7 @@ export default {
         console.log(err)
       }
     },
-    async save() {
+    async save () {
       const process = this.getProcess()
       const xml = await this.saveXML()
       const svg = await this.saveImg()
@@ -306,7 +365,7 @@ export default {
       this.$emit('save', result)
       window.parent.postMessage(result, '*')
     },
-    openBpmn(file) {
+    openBpmn (file) {
       const reader = new FileReader()
       reader.readAsText(file, 'utf-8')
       reader.onload = () => {
@@ -314,7 +373,7 @@ export default {
       }
       return false
     },
-    downloadFile(filename, data, type) {
+    downloadFile (filename, data, type) {
       var a = document.createElement('a')
       var url = window.URL.createObjectURL(new Blob([data], { type: type }))
       a.href = url
@@ -328,12 +387,15 @@ export default {
 
 <style lang="scss">
 /*左边工具栏以及编辑节点的样式*/
-@import "~bpmn-js/dist/assets/diagram-js.css";
-@import "~bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
-@import "~bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css";
-@import "~bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css";
+@import '~bpmn-js/dist/assets/diagram-js.css';
+@import '~bpmn-js/dist/assets/bpmn-font/css/bpmn.css';
+@import '~bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css';
+@import '~bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 .view-mode {
-  .el-header, .el-aside, .djs-palette, .bjs-powered-by {
+  .el-header,
+  .el-aside,
+  .djs-palette,
+  .bjs-powered-by {
     display: none;
   }
   .el-loading-mask {
@@ -360,12 +422,12 @@ export default {
   .load {
     margin-right: 10px;
   }
-  .el-form-item__label{
+  .el-form-item__label {
     font-size: 13px;
   }
 
-  .djs-palette{
-    left: 0px!important;
+  .djs-palette {
+    left: 0px !important;
     top: 0px;
     border-top: none;
   }

@@ -5,6 +5,7 @@
       :xml="xml"
       :users="users"
       :groups="groups"
+      :forms="forms"
       :categorys="categorys"
       :is-view="false"
       @save="saveModeler"
@@ -18,7 +19,7 @@ export default {
   components: {
     bpmnModeler
   },
-  data() {
+  data () {
     return {
       xml: '', // 后端查询到的xml
       users: [
@@ -34,14 +35,18 @@ export default {
       categorys: [
         { name: 'OA', id: 'oa' },
         { name: '财务', id: 'finance' }
+      ],
+      forms: [
+        { formId: '1', formName: '请假' },
+        { formId: '2', formName: '其他' }
       ]
     }
   },
-  mounted() {
+  mounted () {
     this.getModelDetail()
   },
   methods: {
-    getModelDetail() {
+    getModelDetail () {
       fetch('https://cdn.jsdelivr.net/gh/goldsubmarine/workflow-bpmn-modeler@master/src/Leave.bpmn20.xml')
         .then(response => {
           return response.text()
@@ -49,7 +54,7 @@ export default {
           this.xml = xml
         })
     },
-    saveModeler(data) {
+    saveModeler (data) {
       console.log(data)
     }
   }
@@ -57,7 +62,9 @@ export default {
 </script>
 
 <style lang="scss">
-html, body, #app {
+html,
+body,
+#app {
   // height: 650px;
   margin: 0;
 }

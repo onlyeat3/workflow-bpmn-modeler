@@ -3,7 +3,11 @@
     <x-form ref="xForm" v-model="formData" :config="formConfig">
       <template #executionListener>
         <el-badge :value="executionListenerLength">
-          <el-button size="small" @click="dialogName = 'executionListenerDialog'">编辑</el-button>
+          <el-button
+            size="small"
+            @click="dialogName = 'executionListenerDialog'"
+            >编辑</el-button
+          >
         </el-badge>
       </template>
     </x-form>
@@ -22,13 +26,13 @@ import mixinExecutionListener from '../../common/mixinExecutionListener'
 import { commonParse } from '../../common/parseElement'
 export default {
   mixins: [mixinPanel, mixinExecutionListener],
-  data() {
+  data () {
     return {
       formData: {}
     }
   },
   computed: {
-    formConfig() {
+    formConfig () {
       const _this = this
       return {
         inline: false,
@@ -61,31 +65,31 @@ export default {
             show: !!_this.showConfig.initiator
           },
           {
-            xType: 'input',
+            xType: 'select',
             name: 'formKey',
-            label: '表单标识key',
-            show: !!_this.showConfig.formKey
+            label: '表单',
+            show: !!_this.showConfig.formKey,
+            dic: { data: _this.forms, label: 'formName', value: 'formId' }
           }
         ]
       }
     }
   },
   watch: {
-    'formData.initiator': function(val) {
+    'formData.initiator': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:initiator': val })
     },
-    'formData.formKey': function(val) {
+    'formData.formKey': function (val) {
       if (val === '') val = null
       this.updateProperties({ 'flowable:formKey': val })
     }
   },
-  created() {
+  created () {
     this.formData = commonParse(this.element)
   }
 }
 </script>
 
 <style>
-
 </style>

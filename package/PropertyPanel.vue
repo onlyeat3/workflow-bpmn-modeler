@@ -9,6 +9,7 @@
       :users="users"
       :groups="groups"
       :categorys="categorys"
+      :forms="forms"
     />
   </div>
 </template>
@@ -37,12 +38,16 @@ export default {
       type: Array,
       required: true
     },
+    forms: {
+      type: Array,
+      required: true
+    },
     modeler: {
       type: Object,
       required: true
     }
   },
-  data() {
+  data () {
     return {
       element: null,
       form: {
@@ -58,7 +63,7 @@ export default {
     }
   },
   computed: {
-    getComponent() {
+    getComponent () {
       const type = this.element?.type
       if (['bpmn:IntermediateThrowEvent', 'bpmn:StartEvent', 'bpmn:EndEvent'].includes(type)) {
         return 'startEndPanel'
@@ -93,7 +98,7 @@ export default {
       }
       return null
     },
-    nodeName() {
+    nodeName () {
       if (this.element) {
         const bizObj = this.element.businessObject
         const type = bizObj?.eventDefinitions
@@ -104,11 +109,11 @@ export default {
       return ''
     }
   },
-  mounted() {
+  mounted () {
     this.handleModeler()
   },
   methods: {
-    handleModeler() {
+    handleModeler () {
       this.modeler.on('root.added', e => {
         if (e.element.type === 'bpmn:Process') {
           this.element = null
@@ -152,7 +157,7 @@ export default {
   .tab-table .el-form-item {
     margin-bottom: 16px;
   }
-  .node-name{
+  .node-name {
     border-bottom: 1px solid #ccc;
     padding: 0 0 10px 20px;
     margin-bottom: 10px;
